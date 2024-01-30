@@ -26,26 +26,32 @@ def tratar_audio(rec, audio):
 # Listar os microfones disponíveis
 #print(sr.Microphone.list_microphone_names())
 
-mic_index = 0  # escolher o microfone desejado
-with sr.Microphone(device_index=mic_index) as mic:
-        rec.adjust_for_ambient_noise(mic, duration=1)
-        rec.dynamic_energy_adjustment_ratio = 3
-        print('Pode começar a falar, para encerrar a transcrição basta falar "encerrar gravação"')
+def reconhecimento_fala():
+    global fim
+    mic_index = 0  # escolher o microfone desejado
+    with sr.Microphone(device_index=mic_index) as mic:
+            rec.adjust_for_ambient_noise(mic, duration=1)
+            rec.dynamic_energy_adjustment_ratio = 3
+            print('Pode começar a falar, para encerrar a transcrição basta falar "encerrar gravação"')
 
-try:
-    #thread 1
-    parar_ouvir = rec.listen_in_background(mic, tratar_audio) 
+    try:
+        #thread 1
+        parar_ouvir = rec.listen_in_background(mic, tratar_audio) 
 
-    # thread 2
-    while True:
-        time.sleep(0.1)
-        if fim: # falar 'encerrar gravação'
-            break
+        # thread 2
+        while True:
+            time.sleep(0.1)
+            if fim: # falar 'encerrar gravação'
+                break
 
-    # thread 1
-    parar_ouvir(wait_for_stop= False)
-    print('\n----Transcrição encerrada----')
+        # thread 1
+        parar_ouvir(wait_for_stop= False)
+        print('\n----Transcrição encerrada----')
 
-except Exception as e:
-        print(f"Erro: {e}")
+    except Exception as e:
+            print(f"Erro: {e}")
+
+reconhecimento_fala()
+
+
     
